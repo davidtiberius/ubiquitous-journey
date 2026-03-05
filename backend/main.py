@@ -11,6 +11,11 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI(title="BookTracker API")
 
 
+@app.get("/healthz")
+def healthz():
+    return {"status": "ok"}
+
+
 @app.get("/books", response_model=list[BookOut], dependencies=[Depends(require_api_key)])
 def list_books(status: str | None = None, db: Session = Depends(get_db)):
     query = db.query(Book)
