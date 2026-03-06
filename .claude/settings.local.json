@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -m uvicorn --version)",
+      "Bash(pip3 install uvicorn[standard] fastapi sqlalchemy pydantic)",
+      "Bash(python3 -m venv /Users/david/Development/book-api/.venv)",
+      "Bash(/Users/david/Development/book-api/.venv/bin/pip install -r /Users/david/Development/book-api/backend/requirements.txt)",
+      "mcp__Claude_Preview__preview_start"
+    ]
+  }
+}

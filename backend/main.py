@@ -1,4 +1,8 @@
+from pathlib import Path
+
 from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 
 from .auth import require_api_key
@@ -9,6 +13,13 @@ from .schemas import BookCreate, BookOut, BookUpdate
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="BookTracker API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/healthz")
@@ -62,3 +73,8 @@ def delete_book(book_id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Book not found")
     db.delete(book)
     db.commit()
+
+
+frontend_dir = Path(__file__).resolve().parent.parent / "frontend"
+if frontend_dir.is_dir():
+    app.mount("/", StaticFiles(directory=frontend_dir, html=True), name="frontend")
