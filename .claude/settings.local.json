@@ -17,7 +17,13 @@
       "Bash(git -C /Users/david/Development/book-api diff)",
       "Bash(git -C /Users/david/Development/book-api log --oneline -5)",
       "Bash(git -C /Users/david/Development/book-api add backend/auth.py backend/main.py backend/models.py backend/requirements.txt backend/schemas.py)",
-      "Bash(git -C:*)"
+      "Bash(git -C:*)",
+      "Bash(npx create-next-app@latest frontend-next --typescript --tailwind --eslint --app --src-dir --no-import-alias --use-npm)",
+      "Bash(npx create-next-app@latest frontend-next --typescript --tailwind --eslint --app --src-dir --no-import-alias --use-npm --no-turbopack)",
+      "Read(//opt/homebrew/Cellar/python@3.14/3.14.3_1/Frameworks/Python.framework/Versions/3.14/bin/**)",
+      "Bash(/Users/david/Development/book-api/.venv/bin/pip install:*)",
+      "Bash(curl -s http://localhost:8000/auth/login -H 'Content-Type: application/json' -d '{\"\"username\"\":\"\"david\"\",\"\"password\"\":\"\"david\"\"}')",
+      "Bash(/Users/david/Development/book-api/.venv/bin/python3 -c \":*)"
     ]
   }
 }

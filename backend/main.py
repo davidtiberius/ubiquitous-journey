@@ -11,13 +11,31 @@ from .database import Base, SessionLocal, engine, get_db
 from .models import Book, User
 from .schemas import BookCreate, BookOut, BookUpdate, LoginRequest, Token, UserCreate, UserOut
 
+from sqlalchemy import inspect, text
+
+# ── Migrate existing DB if needed ──
+_inspector = inspect(engine)
+_existing_tables = _inspector.get_table_names()
+
+if "users" not in _existing_tables:
+    # Create only the users table first (books table already exists)
+    User.__table__.create(bind=engine)
+
+if "books" in _existing_tables:
+    _book_columns = [c["name"] for c in _inspector.get_columns("books")]
+    if "owner_id" not in _book_columns:
+        with engine.begin() as conn:
+            conn.execute(text("ALTER TABLE books ADD COLUMN owner_id VARCHAR"))
+
+# Now create any remaining tables (no-op for ones that exist)
 Base.metadata.create_all(bind=engine)
 
-# ── Seed admin user on startup ──
-_admin_username = os.environ.get("ADMIN_USERNAME", "admin")
-_admin_password = os.environ.get("ADMIN_PASSWORD", "admin")
+# ── Seed users on startup ──
 _db = SessionLocal()
 try:
+    # Seed admin user
+    _admin_username = os.environ.get("ADMIN_USERNAME", "admin")
+    _admin_password = os.environ.get("ADMIN_PASSWORD", "admin")
     if not _db.query(User).filter(User.is_admin.is_(True)).first():
         _db.add(User(
             username=_admin_username,
@@ -25,6 +43,29 @@ try:
             is_admin=True,
         ))
         _db.commit()
+
+    # Seed default user "david" and assign any unowned books
+    _default_user = _db.query(User).filter(User.username == "david").first()
+    if not _default_user:
+        _default_user = User(
+            username="david",
+            password_hash=hash_password("david"),
+        )
+        _db.add(_default_user)
+        _db.commit()
+        _db.refresh(_default_user)
+
+    # Assign any books with no owner to david
+    _unowned = _db.query(Book).filter(Book.owner_id.is_(None)).count()
+    if _unowned:
+        _db.query(Book).filter(Book.owner_id.is_(None)).update({"owner_id": _default_user.id})
+        _db.commit()
+
+    # Now enforce NOT NULL on owner_id if the DB supports it
+    # (SQLite doesn't support ALTER COLUMN, but the column will be NOT NULL for new rows via the ORM)
+    if not engine.url.drivername.startswith("sqlite"):
+        with engine.begin() as conn:
+            conn.execute(text("ALTER TABLE books ALTER COLUMN owner_id SET NOT NULL"))
 finally:
     _db.close()
 
