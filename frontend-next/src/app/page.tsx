@@ -177,12 +177,12 @@ export default function BooksPage() {
 
         {/* Toolbar */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
-          <div className="flex flex-wrap gap-1">
+          <div className="flex gap-1 overflow-x-auto pb-1 -mb-1">
             {STATUSES.map((s) => (
               <button
                 key={s.value}
                 onClick={() => handleFilterChange(s.value)}
-                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                className={`shrink-0 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
                   filter === s.value
                     ? "bg-blue-600 text-white"
                     : "bg-gray-200 text-gray-700 hover:bg-gray-300"
@@ -264,8 +264,8 @@ export default function BooksPage() {
 
       {/* Add/Edit Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 overflow-y-auto">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md my-auto">
             <form onSubmit={handleSave}>
               <div className="border-b px-6 py-4 flex items-center justify-between">
                 <h2 className="text-lg font-semibold">
