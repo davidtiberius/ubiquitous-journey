@@ -162,6 +162,6 @@ def delete_book(book_id: str, current_user: User = Depends(get_current_user), db
     db.commit()
 
 
-frontend_dir = Path(__file__).resolve().parent.parent / "frontend"
+frontend_dir = Path(__file__).resolve().parent.parent / "frontend-next" / "out"
 if frontend_dir.is_dir():
     app.mount("/", StaticFiles(directory=frontend_dir, html=True), name="frontend")
