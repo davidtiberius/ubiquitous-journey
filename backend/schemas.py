@@ -12,6 +12,34 @@ class ReadingStatus(str, Enum):
     dnf = "dnf"
 
 
+# ── Auth schemas ──
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+
+
+class UserCreate(BaseModel):
+    username: str
+    password: str
+
+
+class UserOut(BaseModel):
+    id: UUID
+    username: str
+    is_admin: bool
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+# ── Book schemas ──
+
 class BookBase(BaseModel):
     title: str
     author: str
