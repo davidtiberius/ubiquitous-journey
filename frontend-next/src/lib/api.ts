@@ -76,6 +76,13 @@ export async function login(username: string, password: string): Promise<void> {
   setToken(data.access_token);
 }
 
+export async function changePassword(currentPassword: string, newPassword: string): Promise<void> {
+  return apiFetch<void>("/auth/password", {
+    method: "PUT",
+    body: JSON.stringify({ current_password: currentPassword, new_password: newPassword }),
+  });
+}
+
 // ── Books ──
 
 export async function fetchBooks(status?: string): Promise<Book[]> {

@@ -157,12 +157,20 @@ export default function BooksPage() {
       <nav className="bg-gray-900 text-white mb-6">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <span className="text-lg font-bold">Book Tracker</span>
-          <button
-            onClick={handleLogout}
-            className="text-sm bg-gray-700 hover:bg-gray-600 rounded px-3 py-1.5 transition-colors"
-          >
-            Logout
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => router.push("/change-password")}
+              className="text-sm text-gray-300 hover:text-white px-3 py-1.5 transition-colors"
+            >
+              Change Password
+            </button>
+            <button
+              onClick={handleLogout}
+              className="text-sm bg-gray-700 hover:bg-gray-600 rounded px-3 py-1.5 transition-colors"
+            >
+              Logout
+            </button>
+          </div>
         </div>
       </nav>
 

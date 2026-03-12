@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from .auth import create_access_token, get_current_user, hash_password, require_admin, verify_password
 from .database import Base, SessionLocal, engine, get_db
 from .models import Book, User
-from .schemas import BookCreate, BookOut, BookUpdate, LoginRequest, Token, UserCreate, UserOut
+from .schemas import BookCreate, BookOut, BookUpdate, ChangePasswordRequest, LoginRequest, Token, UserCreate, UserOut
 
 from sqlalchemy import inspect, text
 
@@ -110,6 +110,16 @@ def create_user(body: UserCreate, admin: User = Depends(require_admin), db: Sess
 @app.get("/auth/users", response_model=list[UserOut])
 def list_users(admin: User = Depends(require_admin), db: Session = Depends(get_db)):
     return db.query(User).all()
+
+
+@app.put("/auth/password", status_code=status.HTTP_204_NO_CONTENT)
+def change_password(body: ChangePasswordRequest, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    if not verify_password(body.current_password, current_user.password_hash):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Current password is incorrect")
+    if len(body.new_password) < 8:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="New password must be at least 8 characters")
+    current_user.password_hash = hash_password(body.new_password)
+    db.commit()
 
 
 # ── Book endpoints (scoped to current user) ──
